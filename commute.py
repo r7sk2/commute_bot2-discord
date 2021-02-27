@@ -109,7 +109,7 @@ async def on_message(message):
             embed = discord.Embed(title='❌  오류', description=f'오류가 발생하였습니다\n`{str(e)}`', color=0xFF0000)
             await message.channel.send(embed=embed)
 
-    if message.content.startswith("!퇴근"):\
+    if message.content.startswith("!퇴근"):
         try:
             db = sqlite3.connect('main.db')
             cursor = db.cursor()
