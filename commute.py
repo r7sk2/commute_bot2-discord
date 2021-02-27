@@ -8,7 +8,7 @@ achannel , token 값 수정해야됩니다
 '''
 
 client = discord.Client()
-token = ★봇토큰★
+token = '★봇토큰★'
 
 @client.event
 async def on_connect():
