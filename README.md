@@ -1,2 +1,3 @@
-# commute_bot2-discord
-출퇴근봇 新
+- 출퇴근봇 
+
+총 근무시간 표시
