@@ -4,7 +4,7 @@ import time
 
 '''
 achannel , token 값 수정해야됩니다
-데이터베이스 봇 켤시 자동생성
+봇 켤시 데이터베이스 자동생성
 '''
 
 client = discord.Client()
@@ -108,46 +108,49 @@ async def on_message(message):
             embed = discord.Embed(title='❌  오류', description=f'오류가 발생하였습니다\n`{str(e)}`', color=0xFF0000)
             await message.channel.send(embed=embed)
 
-    if message.content.startswith("!퇴근"):
-        db = sqlite3.connect('main.db')
-        cursor = db.cursor()
-        cursor.execute(f'SELECT yn FROM main WHERE id = {message.author.id}')
-        result = cursor.fetchone()
-        if result is None:
-            await message.channel.send(f'{message.author.mention} 등록되지 않은 유저입니다')
-            return
-        else:
-            if not "y" in result:
-                await message.channel.send(f'{message.author.mention} 출근상태가 아닙니다')
+    if message.content.startswith("!퇴근"):\
+        try:
+            db = sqlite3.connect('main.db')
+            cursor = db.cursor()
+            cursor.execute(f'SELECT yn FROM main WHERE id = {message.author.id}')
+            result = cursor.fetchone()
+            if result is None:
+                await message.channel.send(f'{message.author.mention} 등록되지 않은 유저입니다')
                 return
-            elif "y" in result:
-                sql = f'UPDATE main SET yn = ? WHERE id = {message.author.id}'
-                val = (str('n'),)
-                cursor.execute(sql, val)
+            else:
+                if not "y" in result:
+                    await message.channel.send(f'{message.author.mention} 출근상태가 아닙니다')
+                    return
+                elif "y" in result:
+                    sql = f'UPDATE main SET yn = ? WHERE id = {message.author.id}'
+                    val = (str('n'),)
+                    cursor.execute(sql, val)
 
-                cursor.execute(f'SELECT stime FROM main WHERE id = {message.author.id}')
-                result = cursor.fetchone()
-                result = str(result).replace('(', '').replace(')', '').replace(',', '').replace("'", "")
-                result = result.split(".")[0]
-                result = int(result)
+                    cursor.execute(f'SELECT stime FROM main WHERE id = {message.author.id}')
+                    result = cursor.fetchone()
+                    result = str(result).replace('(', '').replace(')', '').replace(',', '').replace("'", "")
+                    result = result.split(".")[0]
+                    result = int(result)
 
-                cctime = round(time.time()) - result
-        db.commit()
-        db.close()
+                    cctime = round(time.time()) - result
+            db.commit()
+            db.close()
 
-        if cctime >= 3600:
-            worktime = round(cctime / 3600)
-            danwe = '시간'
-        elif cctime < 3600:
-            worktime = round(cctime / 60)
-            danwe = '분'
+            if cctime >= 3600:
+                worktime = round(cctime / 3600)
+                danwe = '시간'
+            elif cctime < 3600:
+                worktime = round(cctime / 60)
+                danwe = '분'
 
-        embed = discord.Embed(title='', description=f'**{message.author.mention}** 님이 퇴근하였습니다',
-                              color=discord.Colour.red())
-        embed.set_author(name=message.author, icon_url=message.author.avatar_url)
-        embed.set_footer(text='퇴근시간: ' + time.strftime('%m-%d %H:%M') + '\n' + '근무시간: ' + str(worktime) + str(danwe))
-        await client.get_channel(int(achannel)).send(embed=embed)
-        await message.channel.send(f'{message.author.mention} 퇴근완료')
-
+            embed = discord.Embed(title='', description=f'**{message.author.mention}** 님이 퇴근하였습니다',
+                                  color=discord.Colour.red())
+            embed.set_author(name=message.author, icon_url=message.author.avatar_url)
+            embed.set_footer(text='퇴근시간: ' + time.strftime('%m-%d %H:%M') + '\n' + '근무시간: ' + str(worktime) + str(danwe))
+            await client.get_channel(int(achannel)).send(embed=embed)
+            await message.channel.send(f'{message.author.mention} 퇴근완료')
+        except Exception as e:
+                embed = discord.Embed(title='❌  오류', description=f'오류가 발생하였습니다\n`{str(e)}`', color=0xFF0000)
+                await message.channel.send(embed=embed)
 
 client.run(token)
