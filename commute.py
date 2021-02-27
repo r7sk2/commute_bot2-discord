@@ -34,6 +34,7 @@ async def on_message(message):
     if message.content == '!명령어':
         embed = discord.Embed(title='명령어', description='!출근\n!퇴근\n!등록여부\n!등록 @유저')
         await message.channel.send(embed=embed)
+        
     if message.content.startswith("!등록") and not message.content == '!등록여부':
         if message.author.guild_permissions.administrator:
             try:
